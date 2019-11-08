@@ -81,15 +81,15 @@ class TextDataset(Dataset):
         
         self.cached_features = torch.IntTensor(torch.IntStorage.from_file(cached_features_file, map, size))
         
-        torch.set_default_tensor_type(torch.FloatTensor) # TIBS
+        torch.set_default_tensor_type(torch.FloatTensor)
         
         if os.path.exists(cached_features_file) and self.cached_features_state > 0:
-            # logger.info("Loading features from cached file %s", cached_features_file)
-            print("Loading features from cached file %s", cached_features_file)
+            logger.info("Loading features from cached file %s", cached_features_file)
+            # print("Loading features from cached file %s", cached_features_file)
         else:
             assert os.path.isfile(file_path)
-            # logger.info("Creating features from dataset file at %s", directory)
-            print("Creating features from dataset file at %s", directory)
+            logger.info("Creating features from dataset file at %s", directory)
+            # print("Creating features from dataset file at %s", directory)
             
             for i, line in enumerate(open(file_path, encoding="utf-8").readlines()):
                 tokenized_text = tokenizer.convert_tokens_to_ids(tokenizer.tokenize(line + "\n"))
@@ -100,7 +100,14 @@ class TextDataset(Dataset):
             
         self.examples = self.cached_features.unfold(0, block_size, 1)
         
-        torch.set_default_tensor_type(torch.cuda.FloatTensor) # TIBS
+        torch.set_default_tensor_type(torch.cuda.FloatTensor)
+        
+        logger.info("Loaded dataset")
+        
+        if not map:
+            self.cached_features = self.cached_features.to('cuda')
+            self.cached_features_state = self.cached_features_state.to('cuda')
+            logger.info("Loaded dataset to GPU")
     
     def __len__(self):
         return self.cached_features_state.item() - self.block_size + 1

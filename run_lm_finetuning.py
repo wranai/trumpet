@@ -65,7 +65,6 @@ MODEL_CLASSES = {
 
 class TextDataset(Dataset):
     def __init__(self, tokenizer, file_path='train', block_size=512):
-        assert os.path.isfile(file_path)
         self.block_size = block_size
         
         directory, filename = os.path.split(file_path)
@@ -83,6 +82,7 @@ class TextDataset(Dataset):
             # logger.info("Loading features from cached file %s", cached_features_file)
             print("Loading features from cached file %s", cached_features_file)
         else:
+            assert os.path.isfile(file_path)
             # logger.info("Creating features from dataset file at %s", directory)
             print("Creating features from dataset file at %s", directory)
             

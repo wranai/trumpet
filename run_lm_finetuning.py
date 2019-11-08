@@ -64,7 +64,7 @@ MODEL_CLASSES = {
 
 
 class TextDataset(Dataset):
-    def __init__(self, tokenizer, file_path='train', block_size=512):
+    def __init__(self, tokenizer, file_path='train', block_size=512, map = False):
         self.block_size = block_size
         
         directory, filename = os.path.split(file_path)
@@ -73,13 +73,13 @@ class TextDataset(Dataset):
         cached_features_file = os.path.join(directory, 'cached_lm_' + basename)
         cached_features_state_file = cached_features_file + '.state'
         
-        self.cached_features_state = torch.LongTensor(torch.LongStorage.from_file(cached_features_state_file, True, 1))
+        self.cached_features_state = torch.LongTensor(torch.LongStorage.from_file(cached_features_state_file, map, 1))
         
         size = self.cached_features_state[None].item()
         if size == 0:
             size = os.path.exists(file_path)
         
-        self.cached_features = torch.IntTensor(torch.IntStorage.from_file(cached_features_file, True, size))
+        self.cached_features = torch.IntTensor(torch.IntStorage.from_file(cached_features_file, map, size))
         
         torch.set_default_tensor_type(torch.FloatTensor) # TIBS
         

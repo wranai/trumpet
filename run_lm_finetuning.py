@@ -76,8 +76,7 @@ class TextDataset(Dataset):
         self.cached_features_state = torch.LongTensor(torch.LongStorage.from_file(cached_features_state_file, map, 1))
         
         size = self.cached_features_state[None].item()
-        if size == 0:
-            size = os.path.exists(file_path)
+        if size == 0: size = os.path.exists(file_path)
         
         self.cached_features = torch.IntTensor(torch.IntStorage.from_file(cached_features_file, map, size))
         

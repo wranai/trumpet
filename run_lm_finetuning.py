@@ -64,7 +64,7 @@ MODEL_CLASSES = {
 
 
 class TextDataset(Dataset):
-    def __init__(self, tokenizer, file_path='train', block_size=512, map = False):
+    def __init__(self, tokenizer, file_path='train', block_size=512, map = True):
         self.block_size = block_size
         
         directory, filename = os.path.split(file_path)
@@ -103,10 +103,10 @@ class TextDataset(Dataset):
         
         logger.info("Loaded dataset")
         
-        if not map:
-            self.cached_features = self.cached_features.to('cuda')
-            self.cached_features_state = self.cached_features_state.to('cuda')
-            logger.info("Loaded dataset to GPU")
+        # if not map:
+        #    self.cached_features = self.cached_features.to('cuda')
+        #    self.cached_features_state = self.cached_features_state.to('cuda')
+        #    logger.info("Loaded dataset to GPU")
     
     def __len__(self):
         return self.cached_features_state.item() - self.block_size + 1

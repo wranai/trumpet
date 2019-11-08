@@ -73,8 +73,13 @@ class TextDataset(Dataset):
         cached_features_file = os.path.join(directory, 'cached_lm_' + basename)
         cached_features_state_file = cached_features_file + '.state'
         
-        self.cached_features = torch.IntTensor(torch.IntStorage.from_file(cached_features_file, True, os.path.getsize(file_path)))
         self.cached_features_state = torch.LongTensor(torch.LongStorage.from_file(cached_features_state_file, True, 1))
+        
+        size = self.cached_features_state[None].item()
+        if size == 0:
+            size = os.path.exists(file_path)
+        
+        self.cached_features = torch.IntTensor(torch.IntStorage.from_file(cached_features_file, True, size))
         
         torch.set_default_tensor_type(torch.FloatTensor) # TIBS
         
